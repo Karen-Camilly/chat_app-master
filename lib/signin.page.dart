@@ -9,61 +9,69 @@ import 'main.dart'; // Adicionando o import para o pacote supabase_auth_ui
 class SignInPage extends StatelessWidget {
   SignInPage({Key? key}) : super(key: key);
 
-  Future<void> _googleSignIn(BuildContext context) async {
-    const webClientId =
-        '25014520087-jrp0podtr1gs4i15f7ih7glfrmiru9dd.apps.googleusercontent.com';
+  // Future<void> _googleSignIn(BuildContext context) async {
+  //   const webClientId =
+  //       '25014520087-jrp0podtr1gs4i15f7ih7glfrmiru9dd.apps.googleusercontent.com';
 
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: webClientId,
-    );
-    try {
-      final googleUser = await googleSignIn.signIn();
-      final googleAuth = await googleUser!.authentication;
-      final accessToken = googleAuth.accessToken;
-      final idToken = googleAuth.idToken;
+  //   final GoogleSignIn googleSignIn = GoogleSignIn(
+  //     clientId: webClientId,
+  //   );
+  //   try {
+  //     final googleUser = await googleSignIn.signIn();
+  //     final googleAuth = await googleUser!.authentication;
+  //     final accessToken = googleAuth.accessToken;
+  //     final idToken = googleAuth.idToken;
 
-      if (accessToken == null) {
-        throw 'No Access Token found.';
-      }
-      if (idToken == null) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Alerta de Segurança'),
-              content: Text(
-                  'ID Token não liberado devido a circunstâncias de segurança do site!'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
-        return;
-      }
+  //     // função para logar com o google via Web (Chrome)
+  //     await supabase.auth.signInWithOAuth(
+  //       OAuthProvider.google,
+  //       // redirectTo: 'my-scheme://messages',
+  //       redirectTo: 'https://avpyfkkgokkiwkwoaarq.supabase.co/auth/v1/callback',
+  //       //https://avpyfkkgokkiwkwoaarq.supabase.co/auth/v1/callback
+  //     );
 
-      await supabase.auth.signInWithIdToken(
-        provider: OAuthProvider.google,
-        idToken: idToken,
-        accessToken: accessToken,
-      );
+  //     if (accessToken == null) {
+  //       throw 'No Access Token found.';
+  //     }
+  //     if (idToken == null) {
+  //       showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           return AlertDialog(
+  //             title: Text('Alerta de Segurança'),
+  //             content: Text(
+  //                 'ID Token não liberado devido a circunstâncias de segurança do site!'),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text('OK'),
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       );
+  //       return;
+  //     }
 
-      // Redirecionar para a página de mensagens após o login bem-sucedido
-      Navigator.pushReplacementNamed(context, '/messages');
-    } catch (error) {
-      // Lidar com qualquer erro que possa ocorrer durante o login
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to sign in with Google: $error'),
-        ),
-      );
-    }
-  }
+  //     // await supabase.auth.signInWithIdToken(
+  //     //   provider: OAuthProvider.google,
+  //     //   idToken: idToken,
+  //     //   accessToken: accessToken,
+  //     // );
+
+  //     // Redirecionar para a página de mensagens após o login bem-sucedido
+  //     // Navigator.pushReplacementNamed(context, '/messages');
+  //   } catch (error) {
+  //     // Lidar com qualquer erro que possa ocorrer durante o login
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Failed to sign in with Google: $error'),
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +103,14 @@ class SignInPage extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(context, '/signup'),
               ),
               ElevatedButton(
-                onPressed: () => _googleSignIn(context),
+                // onPressed: () => _googleSignIn(context),
+                onPressed: () async {
+                  await supabase.auth.signInWithOAuth(
+                    OAuthProvider.google,
+                    redirectTo:
+                        'https://avpyfkkgokkiwkwoaarq.supabase.co/auth/v1/callback',
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white, // Background color
                   padding:
